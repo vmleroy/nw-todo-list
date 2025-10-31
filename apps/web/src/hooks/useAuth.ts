@@ -1,8 +1,8 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 import { useStore } from '../store';
-import { api } from '../lib/api';
+import { useRefreshTokens, useSignIn, useSignOut, useSignUp } from './operations/useAuth';
 
 interface AuthFormData {
   name?: string;
@@ -10,30 +10,13 @@ interface AuthFormData {
   password: string;
 }
 
-interface AuthResponse {
-  accessToken: string;
-  refreshToken: string;
-  expiresIn: number;
-  user: {
-    id: string;
-    name: string;
-    email: string;
-    role: 'USER' | 'ADMIN';
-  };
-}
-
-interface ApiError {
-  response?: {
-    data?: {
-      message?: string;
-    };
-  };
-}
-
 export const useAuth = () => {
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
-  const { setAuth, logout, user, accessToken, refreshToken } = useStore();
+  const { user, accessToken, refreshToken, logout } = useStore();
+  
+  const signInMutation = useSignIn();
+  const signUpMutation = useSignUp();
+  const signOutMutation = useSignOut();
+  const refreshMutation = useRefreshTokens();
 
   // Auto-refresh token when it's about to expire
   useEffect(() => {
@@ -41,15 +24,7 @@ export const useAuth = () => {
 
     const refreshTokens = async () => {
       try {
-        const response = await api.post('/auth/refresh', {
-          refreshToken,
-        });
-
-        setAuth({
-          accessToken: response.data.accessToken,
-          refreshToken: response.data.refreshToken,
-          user,
-        });
+        await refreshMutation.mutateAsync(refreshToken);
       } catch {
         logout();
       }
@@ -59,78 +34,49 @@ export const useAuth = () => {
     const refreshInterval = setInterval(refreshTokens, 14 * 60 * 1000);
 
     return () => clearInterval(refreshInterval);
-  }, [accessToken, refreshToken, user, setAuth, logout]);
+  }, [accessToken, refreshToken, user, refreshMutation, logout]);
 
   const signIn = async (data: AuthFormData): Promise<boolean> => {
-    setLoading(true);
-    setError(null);
-
     try {
-      const response = await api.post<AuthResponse>('/auth/signin', {
+      await signInMutation.mutateAsync({
         email: data.email,
         password: data.password,
       });
-
-      setAuth({
-        accessToken: response.data.accessToken,
-        refreshToken: response.data.refreshToken,
-        user: response.data.user,
-      });
-
       return true;
-    } catch (err) {
-      const apiError = err as ApiError;
-      const message = apiError?.response?.data?.message || 'Invalid credentials';
-      setError(message);
+    } catch {
       return false;
-    } finally {
-      setLoading(false);
     }
   };
 
   const signUp = async (data: AuthFormData): Promise<boolean> => {
-    setLoading(true);
-    setError(null);
-
     try {
-      await api.post('/auth/signup', {
-        name: data.name,
+      await signUpMutation.mutateAsync({
+        name: data.name!,
         email: data.email,
         password: data.password,
       });
-
       return true;
-    } catch (err) {
-      const apiError = err as ApiError;
-      const message = apiError?.response?.data?.message || 'Registration failed';
-      setError(message);
+    } catch {
       return false;
-    } finally {
-      setLoading(false);
     }
   };
 
   const signOut = async (): Promise<void> => {
-    if (user && refreshToken) {
-      try {
-        await api.delete(`/auth/logout/${user.id}`);
-      } catch (err) {
-        console.error('Logout error:', err);
-      }
-    }
-    logout();
+    await signOutMutation.mutateAsync();
   };
-
-  const clearError = () => setError(null);
 
   return {
     user,
-    loading,
-    error,
+    loading: signInMutation.isPending || signUpMutation.isPending || signOutMutation.isPending,
+    error: signInMutation.error?.message || signUpMutation.error?.message || signOutMutation.error?.message || null,
     signIn,
     signUp,
     signOut,
-    clearError,
+    clearError: () => {
+      signInMutation.reset();
+      signUpMutation.reset();
+      signOutMutation.reset();
+    },
     isAuthenticated: !!accessToken,
   };
 };
