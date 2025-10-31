@@ -4,7 +4,7 @@ import { AuthJWTPayload, AuthSignInDTO, AuthSignUpDTO } from './auth.dto';
 export abstract class AuthRepository {
   abstract signIn(data: AuthSignInDTO): Promise<{
     session: Session;
-    user: User;
+    user: Omit<User, 'password'> & { role: string };
   } | null>;
   abstract signUp(data: AuthSignUpDTO): Promise<{ id: string }>;
   abstract logout(userId: string): Promise<void>;

@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useStore } from '../store';
 import { api } from '../lib/api';
 
@@ -91,6 +91,6 @@ export const useAuth = () => {
     signUp,
     signOut,
     clearError,
-    isAuthenticated: !!user && !!sessionToken,
+    isAuthenticated: !!sessionToken,
   };
 };

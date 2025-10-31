@@ -1,4 +1,5 @@
 import { PrismaService } from '#/prisma.service';
+import { UserCreateDTO, UserUpdateDTO } from './user.dto';
 import { UserRepository } from './user.repository';
 
 export class UserService extends UserRepository {
@@ -6,19 +7,21 @@ export class UserService extends UserRepository {
     super();
   }
 
-  async create(data: {
-    name: string;
-    email: string;
-    password: string;
-  }): Promise<{ id: string }> {
+  async create(data: UserCreateDTO): Promise<{ id: string }> {
     const user = await this.prismaService.user.create({ data });
-    console.log('user', user)
+    await this.prismaService.userRole.create({
+      data: {
+        userId: user.id,
+        role: 'USER',
+      },
+    });
+
     return { id: user.id };
   }
 
   async update(
     id: string,
-    data: Partial<{ name: string; email: string; password: string }>,
+    data: UserUpdateDTO,
   ): Promise<void> {
     await this.prismaService.user.update({
       where: { id },
@@ -30,9 +33,7 @@ export class UserService extends UserRepository {
     await this.prismaService.user.delete({ where: { id } });
   }
 
-  async findById(
-    id: string,
-  ): Promise<{
+  async findById(id: string): Promise<{
     id: string;
     name: string;
     email: string;
@@ -45,9 +46,7 @@ export class UserService extends UserRepository {
     return user;
   }
 
-  async findByEmail(
-    email: string,
-  ): Promise<{
+  async findByEmail(email: string): Promise<{
     id: string;
     name: string;
     email: string;

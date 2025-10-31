@@ -63,7 +63,7 @@ export class UserController {
   async findByEmail(@Param('email') email: string) {
     return this.userService.findByEmail(email);
   }
-
+  
   @Get()
   async getAll() {
     return this.userService.getAll();

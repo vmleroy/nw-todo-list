@@ -19,6 +19,7 @@ export const storeBase = create(
       storage: createJSONStorage(() => localStorage),
       partialize: (state) => ({
         sessionToken: state.sessionToken,
+        user: state.user,
       }),
     },
   ),

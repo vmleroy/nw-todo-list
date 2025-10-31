@@ -12,19 +12,20 @@ import { Injectable, UnauthorizedException } from '@nestjs/common';
 export class AuthService extends AuthRepository {
   expiryDuration = 7 * 24 * 60 * 60 * 1000; // 7 days in milliseconds
 
-  constructor(
-    private readonly prismaService: PrismaService,
-  ) {
+  constructor(private readonly prismaService: PrismaService) {
     super();
   }
 
   async signIn(data: AuthSignInDTO): Promise<{
     session: Session;
-    user: User;
+    user: Omit<User, 'password'> & { role: string };
   } | null> {
     // Find user with password included for verification
     const user = await this.prismaService.user.findUnique({
       where: { email: data.email },
+      include: {
+        userRole: true,
+      },
     });
 
     if (!user) {
@@ -42,11 +43,11 @@ export class AuthService extends AuthRepository {
 
     // Remove password from user object
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    const { password, ...userWithoutPassword } = user;
+    const { password, userRole, ...userWithoutPassword } = user;
 
     return {
       session,
-      user: userWithoutPassword as User,
+      user: { ...userWithoutPassword, role: userRole[0].role as string },
     };
   }
 
@@ -70,6 +71,13 @@ export class AuthService extends AuthRepository {
         password: hashedPassword,
       },
     });
+    await this.prismaService.userRole.create({
+      data: {
+        userId: user.id,
+        role: 'USER',
+      },
+    });
+
     return { id: user.id };
   }
 
