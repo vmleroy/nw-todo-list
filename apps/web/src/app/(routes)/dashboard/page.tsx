@@ -33,7 +33,6 @@ export default function DashboardPage() {
           <Button
             className={styles.logoutButton}
             onClick={signOut}
-            appName="dashboard"
           >
             Sign Out
           </Button>
@@ -60,15 +59,7 @@ export default function DashboardPage() {
           <div className={styles.actionButtons}>
             <Button
               className={styles.actionButton}
-              onClick={() => alert('Profile settings coming soon!')}
-              appName="dashboard"
-            >
-              Edit Profile
-            </Button>
-            <Button
-              className={styles.actionButton}
               onClick={() => alert('Todo list feature coming soon!')}
-              appName="dashboard"
             >
               My Todo Lists
             </Button>
