@@ -2,29 +2,33 @@ import { StateCreator } from 'zustand';
 import { User } from '../../types/user';
 
 export interface AuthSlice {
-  sessionToken: string | null;
+  accessToken: string | null;
+  refreshToken: string | null;
   user: User | null;
 
-  setAuth: (auth: { sessionToken: string; user: User }) => void;
+  setAuth: (auth: { accessToken: string; refreshToken: string; user: User }) => void;
   logout: () => void;
-  getSessionToken: () => string | null;
+  getAccessToken: () => string | null;
 }
 
 export const createAuthSlice: StateCreator<AuthSlice> = (set, get) => ({
-  sessionToken: null,
+  accessToken: null,
+  refreshToken: null,
   user: null,
 
   setAuth: (auth) =>
     set({
-      sessionToken: auth.sessionToken,
+      accessToken: auth.accessToken,
+      refreshToken: auth.refreshToken,
       user: auth.user,
     }),
 
   logout: () =>
     set({
-      sessionToken: null,
+      accessToken: null,
+      refreshToken: null,
       user: null,
     }),
 
-  getSessionToken: () => get().sessionToken,
+  getAccessToken: () => get().accessToken,
 });

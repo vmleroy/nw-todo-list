@@ -18,7 +18,8 @@ export const storeBase = create(
       name: 'autonomy-edge-store',
       storage: createJSONStorage(() => localStorage),
       partialize: (state) => ({
-        sessionToken: state.sessionToken,
+        accessToken: state.accessToken,
+        refreshToken: state.refreshToken,
         user: state.user,
       }),
     },

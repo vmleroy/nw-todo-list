@@ -11,18 +11,55 @@ interface AuthFormData {
 }
 
 interface AuthResponse {
-  token: string;
+  accessToken: string;
+  refreshToken: string;
+  expiresIn: number;
   user: {
     id: string;
     name: string;
     email: string;
+    role: 'USER' | 'ADMIN';
+  };
+}
+
+interface ApiError {
+  response?: {
+    data?: {
+      message?: string;
+    };
   };
 }
 
 export const useAuth = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const { setAuth, logout, user, sessionToken } = useStore();
+  const { setAuth, logout, user, accessToken, refreshToken } = useStore();
+
+  // Auto-refresh token when it's about to expire
+  useEffect(() => {
+    if (!accessToken || !refreshToken || !user) return;
+
+    const refreshTokens = async () => {
+      try {
+        const response = await api.post('/auth/refresh', {
+          refreshToken,
+        });
+
+        setAuth({
+          accessToken: response.data.accessToken,
+          refreshToken: response.data.refreshToken,
+          user,
+        });
+      } catch {
+        logout();
+      }
+    };
+
+    // Refresh token 1 minute before expiry (14 minutes for 15-minute tokens)
+    const refreshInterval = setInterval(refreshTokens, 14 * 60 * 1000);
+
+    return () => clearInterval(refreshInterval);
+  }, [accessToken, refreshToken, user, setAuth, logout]);
 
   const signIn = async (data: AuthFormData): Promise<boolean> => {
     setLoading(true);
@@ -35,13 +72,15 @@ export const useAuth = () => {
       });
 
       setAuth({
-        sessionToken: response.data.token,
+        accessToken: response.data.accessToken,
+        refreshToken: response.data.refreshToken,
         user: response.data.user,
       });
 
       return true;
     } catch (err) {
-      const message = err?.response?.data?.message || 'Invalid credentials';
+      const apiError = err as ApiError;
+      const message = apiError?.response?.data?.message || 'Invalid credentials';
       setError(message);
       return false;
     } finally {
@@ -62,7 +101,8 @@ export const useAuth = () => {
 
       return true;
     } catch (err) {
-      const message = err?.response?.data?.message || 'Registration failed';
+      const apiError = err as ApiError;
+      const message = apiError?.response?.data?.message || 'Registration failed';
       setError(message);
       return false;
     } finally {
@@ -71,7 +111,7 @@ export const useAuth = () => {
   };
 
   const signOut = async (): Promise<void> => {
-    if (user && sessionToken) {
+    if (user && refreshToken) {
       try {
         await api.delete(`/auth/logout/${user.id}`);
       } catch (err) {
@@ -91,6 +131,6 @@ export const useAuth = () => {
     signUp,
     signOut,
     clearError,
-    isAuthenticated: !!sessionToken,
+    isAuthenticated: !!accessToken,
   };
 };

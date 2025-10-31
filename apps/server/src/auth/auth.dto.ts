@@ -12,4 +12,11 @@ export type AuthSignUpDTO = {
 export type AuthJWTPayload = {
   sub: string;
   email: string;
+  type: 'access' | 'refresh';
+};
+
+export type TokenResponse = {
+  accessToken: string;
+  refreshToken: string;
+  expiresIn: number;
 };

@@ -1,4 +1,4 @@
-import { User } from "@prisma/client";
+import { User, UserRole } from '@prisma/client';
 
 export type UserCreateDTO = {
   name: string;
@@ -13,4 +13,4 @@ export type UserUpdateDTO = Partial<{
   role: 'USER' | 'ADMIN';
 }>;
 
-export type UserResponseDTO = User;
+export type UserResponseDTO = User & { userRole: UserRole[] };

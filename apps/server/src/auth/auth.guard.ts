@@ -14,14 +14,14 @@ export class AuthGuard implements CanActivate {
     }
 
     const token = authorization.replace('Bearer ', '');
-    const session = await this.authService.getSession(token);
+    const payload = await this.authService.validateAccessToken(token);
 
-    if (!session || session.expiresAt < new Date()) {
-      throw new UnauthorizedException('Invalid or expired token');
+    if (!payload) {
+      throw new UnauthorizedException('Invalid or expired access token');
     }
 
     // Add user info to request
-    request.user = { id: session.userId };
+    request.user = { id: payload.sub, email: payload.email };
     return true;
   }
 }

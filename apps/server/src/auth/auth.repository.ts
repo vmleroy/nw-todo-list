@@ -1,26 +1,52 @@
-import { Session, User } from '@prisma/client';
-import { AuthJWTPayload, AuthSignInDTO, AuthSignUpDTO } from './auth.dto';
+import {
+  AuthJWTPayload,
+  AuthSignInDTO,
+  AuthSignUpDTO,
+  TokenResponse,
+} from './auth.dto';
+import { UserResponseDTO } from '#/user/user.dto';
 
 export abstract class AuthRepository {
   abstract signIn(data: AuthSignInDTO): Promise<{
-    session: Session;
-    user: Omit<User, 'password'> & { role: string };
+    tokens: TokenResponse;
+    user: Omit<UserResponseDTO, 'password'>;
   } | null>;
   abstract signUp(data: AuthSignUpDTO): Promise<{ id: string }>;
   abstract logout(userId: string): Promise<void>;
 
   /**
-   * Creates a new session for the given user ID and returns the session token.
+   * Creates access and refresh tokens for the given user ID.
    */
-  abstract createSession(payload: AuthJWTPayload): Promise<Session>;
+  abstract createTokens(
+    payload: Omit<AuthJWTPayload, 'type'>,
+  ): Promise<TokenResponse>;
 
   /**
-   * Retrieves the session associated with the given token.
+   * Validates an access token and returns the payload.
    */
-  abstract getSession(token: string): Promise<Session | null>;
+  abstract validateAccessToken(token: string): Promise<AuthJWTPayload | null>;
 
   /**
-   * Refreshes a token and returns a new token if the old one is valid.
+   * Validates a refresh token and returns the payload.
    */
-  abstract refreshToken(token: string): Promise<{ token: string } | null>;
+  abstract validateRefreshToken(token: string): Promise<AuthJWTPayload | null>;
+
+  /**
+   * Refreshes tokens using a valid refresh token.
+   */
+  abstract refreshTokens(refreshToken: string): Promise<TokenResponse | null>;
+
+  /**
+   * Stores refresh token in database.
+   */
+  abstract storeRefreshToken(
+    userId: string,
+    token: string,
+    expiresAt: Date,
+  ): Promise<void>;
+
+  /**
+   * Removes refresh token from database.
+   */
+  abstract removeRefreshToken(token: string): Promise<void>;
 }
