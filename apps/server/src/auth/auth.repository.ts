@@ -1,5 +1,5 @@
 import { Session, User } from '@prisma/client';
-import { AuthSignInDTO, AuthSignUpDTO } from './auth.dto';
+import { AuthJWTPayload, AuthSignInDTO, AuthSignUpDTO } from './auth.dto';
 
 export abstract class AuthRepository {
   abstract signIn(data: AuthSignInDTO): Promise<{
@@ -12,7 +12,7 @@ export abstract class AuthRepository {
   /**
    * Creates a new session for the given user ID and returns the session token.
    */
-  abstract createSession(userId: string): Promise<Session>;
+  abstract createSession(payload: AuthJWTPayload): Promise<Session>;
 
   /**
    * Retrieves the session associated with the given token.

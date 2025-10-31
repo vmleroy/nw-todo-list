@@ -29,27 +29,41 @@ export class UserService extends UserRepository {
     await this.prismaService.user.delete({ where: { id } });
   }
 
-  async findById(id: string): Promise<{ id: string; name: string } | null> {
+  async findById(
+    id: string,
+  ): Promise<{
+    id: string;
+    name: string;
+    email: string;
+    password: string;
+  } | null> {
     const user = await this.prismaService.user.findUnique({
       where: { id },
-      select: { id: true, name: true },
+      select: { id: true, name: true, email: true, password: true },
     });
     return user;
   }
 
   async findByEmail(
     email: string,
-  ): Promise<{ id: string; name: string } | null> {
+  ): Promise<{
+    id: string;
+    name: string;
+    email: string;
+    password: string;
+  } | null> {
     const user = await this.prismaService.user.findUnique({
       where: { email },
-      select: { id: true, name: true },
+      select: { id: true, name: true, email: true, password: true },
     });
     return user;
   }
 
-  async getAll(): Promise<Array<{ id: string; name: string }>> {
+  async getAll(): Promise<
+    Array<{ id: string; name: string; email: string; password: string }>
+  > {
     const users = await this.prismaService.user.findMany({
-      select: { id: true, name: true },
+      select: { id: true, name: true, email: true, password: true },
     });
     return users;
   }

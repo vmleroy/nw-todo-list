@@ -8,3 +8,8 @@ export type AuthSignUpDTO = {
   email: string;
   password: string;
 };
+
+export type AuthJWTPayload = {
+  sub: string;
+  email: string;
+};

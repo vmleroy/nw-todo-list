@@ -1,3 +1,5 @@
+import { User } from "@prisma/client";
+
 export type UserCreateDTO = {
   name: string;
   email: string;
@@ -10,7 +12,4 @@ export type UserUpdateDTO = Partial<{
   password: string;
 }>;
 
-export type UserResponseDTO = {
-  id: string;
-  name: string;
-};
+export type UserResponseDTO = User;

@@ -1,14 +1,23 @@
 import { Session, User } from '@prisma/client';
-import crypto from 'crypto';
+import { JwtService } from '@nestjs/jwt';
+import * as bcrypt from 'bcrypt';
+import * as crypto from 'crypto';
 
 import { PrismaService } from '#/prisma.service';
-import { AuthRepository } from './auth.repository';
-import { AuthSignInDTO, AuthSignUpDTO } from './auth.dto';
+import { UserService } from '#/user/user.service';
 
+import { AuthRepository } from './auth.repository';
+import { AuthJWTPayload, AuthSignInDTO, AuthSignUpDTO } from './auth.dto';
+import { Injectable, UnauthorizedException } from '@nestjs/common';
+
+@Injectable()
 export class AuthService extends AuthRepository {
   expiryDuration = 7 * 24 * 60 * 60 * 1000; // 7 days in milliseconds
 
-  constructor(private readonly prismaService: PrismaService) {
+  constructor(
+    private readonly prismaService: PrismaService,
+    private readonly userService: UserService,
+  ) {
     super();
   }
 
@@ -16,26 +25,52 @@ export class AuthService extends AuthRepository {
     session: Session;
     user: User;
   } | null> {
+    // Find user with password included for verification
     const user = await this.prismaService.user.findUnique({
-      where: { email: data.email, password: data.password },
+      where: { email: data.email },
     });
+
     if (!user) {
-      return null;
+      throw new UnauthorizedException('Invalid credentials');
     }
-    // In a real application, generate a JWT or similar token here
-    const session = await this.createSession(user.id);
-    if (!session) {
-      return null;
+
+    // Verify password
+    const isPasswordValid = await bcrypt.compare(data.password, user.password);
+    if (!isPasswordValid) {
+      throw new UnauthorizedException('Invalid credentials');
     }
+
+    const payload: AuthJWTPayload = { sub: user.id, email: user.email };
+    const session = await this.createSession(payload);
+
+    // Remove password from user object
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const { password, ...userWithoutPassword } = user;
 
     return {
       session,
-      user,
+      user: userWithoutPassword as User,
     };
   }
 
   async signUp(data: AuthSignUpDTO): Promise<{ id: string }> {
-    const user = await this.prismaService.user.create({ data });
+    // Check if user already exists
+    const existingUser = await this.prismaService.user.findUnique({
+      where: { email: data.email },
+    });
+
+    if (existingUser) {
+      throw new UnauthorizedException('User already exists');
+    }
+
+    // Hash password
+    const hashedPassword = await bcrypt.hash(data.password, 10);
+
+    const user = await this.userService.create({
+      name: data.name,
+      email: data.email,
+      password: hashedPassword,
+    });
     return { id: user.id };
   }
 
@@ -44,13 +79,13 @@ export class AuthService extends AuthRepository {
     return;
   }
 
-  async createSession(userId: string): Promise<Session> {
+  async createSession(payload: AuthJWTPayload): Promise<Session> {
     const token = crypto.randomBytes(32).toString('base64url');
     const expiresAt = new Date(Date.now() + this.expiryDuration);
 
     const session = await this.prismaService.session.create({
       data: {
-        userId,
+        userId: payload.sub,
         sessionToken: token,
         expiresAt,
       },
