@@ -1,10 +1,8 @@
 import { Session, User } from '@prisma/client';
-import { JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcrypt';
 import * as crypto from 'crypto';
 
 import { PrismaService } from '#/prisma.service';
-import { UserService } from '#/user/user.service';
 
 import { AuthRepository } from './auth.repository';
 import { AuthJWTPayload, AuthSignInDTO, AuthSignUpDTO } from './auth.dto';
@@ -16,7 +14,6 @@ export class AuthService extends AuthRepository {
 
   constructor(
     private readonly prismaService: PrismaService,
-    private readonly userService: UserService,
   ) {
     super();
   }
@@ -66,10 +63,12 @@ export class AuthService extends AuthRepository {
     // Hash password
     const hashedPassword = await bcrypt.hash(data.password, 10);
 
-    const user = await this.userService.create({
-      name: data.name,
-      email: data.email,
-      password: hashedPassword,
+    const user = await this.prismaService.user.create({
+      data: {
+        name: data.name,
+        email: data.email,
+        password: hashedPassword,
+      },
     });
     return { id: user.id };
   }

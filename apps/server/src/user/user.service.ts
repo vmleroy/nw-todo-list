@@ -12,6 +12,7 @@ export class UserService extends UserRepository {
     password: string;
   }): Promise<{ id: string }> {
     const user = await this.prismaService.user.create({ data });
+    console.log('user', user)
     return { id: user.id };
   }
 

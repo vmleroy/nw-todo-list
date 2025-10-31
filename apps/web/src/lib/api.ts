@@ -2,7 +2,7 @@ import axios from 'axios';
 import { useStore } from '../store';
 
 export const api = axios.create({
-  baseURL: process.env.API_URL ?? '/api',
+  baseURL: (process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001') + '/api',
 });
 
 api.interceptors.request.use((config) => {
