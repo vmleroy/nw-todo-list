@@ -1,4 +1,9 @@
-import { Injectable, CanActivate, ExecutionContext, UnauthorizedException } from '@nestjs/common';
+import {
+  Injectable,
+  CanActivate,
+  ExecutionContext,
+  UnauthorizedException,
+} from '@nestjs/common';
 import { AuthService } from './auth.service';
 
 @Injectable()
@@ -21,7 +26,7 @@ export class AuthGuard implements CanActivate {
     }
 
     // Add user info to request
-    request.user = { id: payload.sub, email: payload.email };
+    request.user = { id: payload.sub, sub: payload.sub, email: payload.email };
     return true;
   }
 }

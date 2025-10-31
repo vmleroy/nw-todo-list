@@ -59,9 +59,15 @@ export default function DashboardPage() {
           <div className={styles.actionButtons}>
             <Button
               className={styles.actionButton}
-              onClick={() => alert('Todo list feature coming soon!')}
+              onClick={() => router.push('/tasks')}
             >
-              My Todo Lists
+              Manage Tasks
+            </Button>
+            <Button
+              className={styles.actionButton}
+              onClick={() => alert('More features coming soon!')}
+            >
+              View Reports
             </Button>
           </div>
         </div>

@@ -1,6 +1,7 @@
 import { NestFactory } from '@nestjs/core';
 
 import { AppModule } from './app.module';
+import { getCorsConfig } from './config/cors.config';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
@@ -8,15 +9,12 @@ async function bootstrap() {
   // Set global API prefix
   app.setGlobalPrefix('api');
   
-  // Configure CORS for development
-  app.enableCors({
-    origin: ['http://localhost:3000', 'http://localhost:3001'], // Allow both frontend ports
-    methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
-    allowedHeaders: ['Content-Type', 'Authorization'],
-    credentials: true,
-  });
+  // Apply CORS configuration
+  app.enableCors(getCorsConfig());
   
-  await app.listen(3001); // Changed to port 3001 to avoid conflicts
+  const port = process.env.PORT || 3001;
+  await app.listen(port);
+  console.log(`Server running on port ${port}`);
 }
 
 void bootstrap();

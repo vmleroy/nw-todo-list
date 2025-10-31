@@ -10,6 +10,7 @@ api.interceptors.request.use((config) => {
   if (token) {
     config.headers = config.headers ?? {};
     config.headers.Authorization = `Bearer ${token}`;
+    config.headers.user = useStore.getState().user?.id;
   }
   return config;
 });

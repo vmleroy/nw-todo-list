@@ -6,14 +6,22 @@
   "tasks": {
     "dev": {
       "env": [
-        "JWT_SECRET"
+        "JWT_SECRET",
+        "FRONTEND_URL",
+        "NODE_ENV",
+        "CORS_ORIGINS",
+        "PORT"
       ],
       "cache": false,
       "persistent": true
     },
     "build": {
       "env": [
-        "JWT_SECRET"
+        "JWT_SECRET",
+        "FRONTEND_URL",
+        "NODE_ENV",
+        "CORS_ORIGINS",
+        "PORT"
       ],
       "dependsOn": [
         "^build"
