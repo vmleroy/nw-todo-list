@@ -1,14 +1,14 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { api } from '../../lib/api';
 import { useStore } from '../../store';
-import { AuthResponse, SignInData, SignUpData } from '../../types/auth';
+import { AuthResponse, AuthSignInDTO, AuthSignUpDTO } from '@repo/api';
 
 export const useSignIn = () => {
   const { setAuth } = useStore();
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: async (data: SignInData): Promise<AuthResponse> => {
+    mutationFn: async (data: AuthSignInDTO): Promise<AuthResponse> => {
       const response = await api.post<AuthResponse>('/auth/signin', data);
       return response.data;
     },
@@ -25,7 +25,7 @@ export const useSignIn = () => {
 
 export const useSignUp = () => {
   return useMutation({
-    mutationFn: async (data: SignUpData) => {
+    mutationFn: async (data: AuthSignUpDTO) => {
       const response = await api.post('/auth/signup', data);
       return response.data;
     },

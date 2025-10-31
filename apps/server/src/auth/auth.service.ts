@@ -9,9 +9,9 @@ import {
   AuthSignInDTO,
   AuthSignUpDTO,
   TokenResponse,
-} from './auth.dto';
+} from '@repo/api';
 import { UserService } from '#/user/user.service';
-import { UserResponseDTO } from '#/user/user.dto';
+import { UserResponseDTO } from '@repo/api';
 
 @Injectable()
 export class AuthService extends AuthRepository {

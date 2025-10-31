@@ -1,4 +1,4 @@
-import { TaskCreateDto, TaskResponseDto, TaskUpdateDto } from './task.dto';
+import { TaskCreateDto, TaskResponseDto, TaskUpdateDto } from '@repo/api';
 
 export abstract class TaskRepository {
   abstract create(

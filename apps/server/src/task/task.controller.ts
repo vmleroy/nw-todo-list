@@ -11,7 +11,7 @@ import {
 } from '@nestjs/common';
 import { AuthGuard } from '../auth/auth.guard';
 import { TaskService } from './task.service';
-import { TaskCreateDto, TaskUpdateDto, TaskResponseDto } from './task.dto';
+import { TaskCreateDto, TaskResponseDto, TaskUpdateDto } from '@repo/api';
 
 interface AuthenticatedRequest {
   user: {

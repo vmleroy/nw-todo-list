@@ -1,11 +1,11 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { api } from '../../lib/api';
-import { CreateTaskData, Task, UpdateTaskData } from '../../types/task';
+import { CreateTaskData, TaskEntity, UpdateTaskData } from '@repo/api';
 
 export const useTasks = () => {
   return useQuery({
     queryKey: ['tasks'],
-    queryFn: async (): Promise<Task[]> => {
+    queryFn: async (): Promise<TaskEntity[]> => {
       const response = await api.get('/tasks');
       return response.data;
     },
@@ -15,7 +15,7 @@ export const useTasks = () => {
 export const useTask = (taskId: string) => {
   return useQuery({
     queryKey: ['tasks', taskId],
-    queryFn: async (): Promise<Task> => {
+    queryFn: async (): Promise<TaskEntity> => {
       const response = await api.get(`/tasks/${taskId}`);
       return response.data;
     },
@@ -27,7 +27,7 @@ export const useCreateTask = () => {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: async (data: CreateTaskData): Promise<Task> => {
+    mutationFn: async (data: CreateTaskData): Promise<TaskEntity> => {
       const response = await api.post('/tasks', data);
       return response.data;
     },
@@ -47,7 +47,7 @@ export const useUpdateTask = () => {
     }: {
       taskId: string;
       data: UpdateTaskData;
-    }): Promise<Task> => {
+    }): Promise<TaskEntity> => {
       const response = await api.patch(`/tasks/${taskId}`, data);
       return response.data;
     },
@@ -81,7 +81,7 @@ export const useToggleTaskComplete = () => {
     }: {
       taskId: string;
       completed: boolean;
-    }): Promise<Task> => {
+    }): Promise<TaskEntity> => {
       const response = await api.patch(`/tasks/${taskId}`, { completed });
       return response.data;
     },

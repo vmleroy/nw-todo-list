@@ -4,9 +4,9 @@ import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { Button } from '@repo/ui/button';
 import { useAuth } from '../../../hooks/useAuth';
-import { CreateTaskData, Task, UpdateTaskData } from '../../../types/task';
 import styles from './tasks.module.css';
 import { useTaskManager } from '../../../hooks/useTask';
+import { CreateTaskData, UpdateTaskData, TaskEntity } from '@repo/api';
 
 export default function TasksPage() {
   const { isAuthenticated, user } = useAuth();
@@ -26,7 +26,7 @@ export default function TasksPage() {
   } = useTaskManager();
 
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
-  const [editingTask, setEditingTask] = useState<Task | null>(null);
+  const [editingTask, setEditingTask] = useState<TaskEntity | null>(null);
   const [createFormData, setCreateFormData] = useState<CreateTaskData>({
     title: '',
     description: '',
@@ -55,12 +55,14 @@ export default function TasksPage() {
     const cleanedData: CreateTaskData = {
       title: createFormData.title,
       description: createFormData.description || undefined,
-      dueDate: createFormData.dueDate && createFormData.dueDate.trim() !== '' 
-        ? createFormData.dueDate 
-        : undefined,
-      startDate: createFormData.startDate && createFormData.startDate.trim() !== '' 
-        ? createFormData.startDate 
-        : undefined,
+      dueDate:
+        createFormData.dueDate && createFormData.dueDate.trim() !== ''
+          ? createFormData.dueDate
+          : undefined,
+      startDate:
+        createFormData.startDate && createFormData.startDate.trim() !== ''
+          ? createFormData.startDate
+          : undefined,
     };
 
     createTask(cleanedData, {
@@ -72,11 +74,14 @@ export default function TasksPage() {
   };
 
   const handleUpdateTask = (taskId: string, data: UpdateTaskData) => {
-    updateTask({ taskId, data }, {
-      onSuccess: () => {
-        setEditingTask(null);
+    updateTask(
+      { taskId, data },
+      {
+        onSuccess: () => {
+          setEditingTask(null);
+        },
       },
-    });
+    );
   };
 
   const handleToggleComplete = (taskId: string, completed: boolean) => {
@@ -103,9 +108,7 @@ export default function TasksPage() {
       <div className={styles.error}>
         <h2>Error loading tasks</h2>
         <p>{error.message}</p>
-        <Button onClick={() => window.location.reload()}>
-          Retry
-        </Button>
+        <Button onClick={() => window.location.reload()}>Retry</Button>
       </div>
     );
   }
@@ -116,10 +119,7 @@ export default function TasksPage() {
         <div className={styles.headerContent}>
           <h1 className={styles.title}>My Tasks</h1>
           <div style={{ display: 'flex', gap: '1rem' }}>
-            <Button
-              onClick={() => router.push('/dashboard')}
-              variant="outline"
-            >
+            <Button onClick={() => router.push('/dashboard')} variant="outline">
               ← Dashboard
             </Button>
             <Button
@@ -155,15 +155,17 @@ export default function TasksPage() {
                     disabled={isToggling}
                     className={styles.checkbox}
                   />
-                  <h3 className={`${styles.taskTitle} ${task.completed ? styles.completed : ''}`}>
+                  <h3
+                    className={`${styles.taskTitle} ${task.completed ? styles.completed : ''}`}
+                  >
                     {task.title}
                   </h3>
                 </div>
-                
+
                 {task.description && (
                   <p className={styles.taskDescription}>{task.description}</p>
                 )}
-                
+
                 <div className={styles.taskMeta}>
                   <span className={styles.createdAt}>
                     Created: {new Date(task.createdAt).toLocaleDateString()}
@@ -211,7 +213,10 @@ export default function TasksPage() {
                   id="title"
                   value={createFormData.title}
                   onChange={(e) =>
-                    setCreateFormData({ ...createFormData, title: e.target.value })
+                    setCreateFormData({
+                      ...createFormData,
+                      title: e.target.value,
+                    })
                   }
                   required
                   disabled={isCreating}
@@ -224,7 +229,10 @@ export default function TasksPage() {
                   id="description"
                   value={createFormData.description || ''}
                   onChange={(e) =>
-                    setCreateFormData({ ...createFormData, description: e.target.value })
+                    setCreateFormData({
+                      ...createFormData,
+                      description: e.target.value,
+                    })
                   }
                   disabled={isCreating}
                   rows={3}
@@ -238,7 +246,10 @@ export default function TasksPage() {
                   id="dueDate"
                   value={createFormData.dueDate || ''}
                   onChange={(e) =>
-                    setCreateFormData({ ...createFormData, dueDate: e.target.value })
+                    setCreateFormData({
+                      ...createFormData,
+                      dueDate: e.target.value,
+                    })
                   }
                   disabled={isCreating}
                 />
@@ -253,7 +264,10 @@ export default function TasksPage() {
                 >
                   Cancel
                 </Button>
-                <Button type="submit" disabled={isCreating || !createFormData.title.trim()}>
+                <Button
+                  type="submit"
+                  disabled={isCreating || !createFormData.title.trim()}
+                >
                   {isCreating ? 'Creating...' : 'Create Task'}
                 </Button>
               </div>
@@ -274,7 +288,7 @@ export default function TasksPage() {
                 const updateData: UpdateTaskData = {
                   title: formData.get('title') as string,
                   description: formData.get('description') as string,
-                  dueDate: formData.get('dueDate') as string || undefined,
+                  dueDate: (formData.get('dueDate') as string) || undefined,
                 };
                 handleUpdateTask(editingTask.id, updateData);
               }}
@@ -308,7 +322,13 @@ export default function TasksPage() {
                   type="date"
                   id="editDueDate"
                   name="dueDate"
-                  defaultValue={editingTask.dueDate ? new Date(editingTask.dueDate).toISOString().split('T')[0] : ''}
+                  defaultValue={
+                    editingTask.dueDate
+                      ? new Date(editingTask.dueDate)
+                          .toISOString()
+                          .split('T')[0]
+                      : ''
+                  }
                   disabled={isUpdating}
                 />
               </div>

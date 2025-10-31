@@ -1,4 +1,4 @@
-import { UserCreateDTO, UserUpdateDTO, UserResponseDTO } from './user.dto';
+import { UserCreateDTO, UserUpdateDTO, UserResponseDTO } from '@repo/api';
 
 export abstract class UserRepository {
   abstract create(data: UserCreateDTO): Promise<{ id: string }>;

@@ -1,5 +1,5 @@
 import { PrismaService } from '#/prisma.service';
-import { UserCreateDTO, UserResponseDTO, UserUpdateDTO } from './user.dto';
+import { UserCreateDTO, UserResponseDTO, UserUpdateDTO } from '@repo/api';
 import { UserRepository } from './user.repository';
 import * as bcrypt from 'bcrypt';
 

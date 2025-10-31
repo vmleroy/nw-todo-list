@@ -1,6 +1,6 @@
-export type UserEntity = {
+export interface UserEntity {
   id: string;
   email: string;
-  name: string;
+  name: string | null;
   role: 'USER' | 'ADMIN';
-};
+}

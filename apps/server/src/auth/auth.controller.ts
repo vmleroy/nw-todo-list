@@ -1,5 +1,5 @@
 import { Controller, Post, Body, Delete, Param, UnauthorizedException } from '@nestjs/common';
-import { AuthSignInDTO, AuthSignUpDTO } from './auth.dto';
+import { AuthSignInDTO, AuthSignUpDTO } from '@repo/api';
 import { AuthService } from './auth.service';
 
 @Controller('auth')
@@ -21,7 +21,7 @@ export class AuthController {
         id: result.user.id,
         name: result.user.name,
         email: result.user.email,
-        role: result.user.userRole[0].role,
+        role: result.user.userRole?.[0]?.role || 'USER',
       },
     };
   }

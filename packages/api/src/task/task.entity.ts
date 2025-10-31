@@ -1,27 +1,25 @@
-interface Task {
+export interface TaskEntity {
   id: string;
   title: string;
-  description?: string;
+  description: string | null;
   completed: boolean;
-  startDate?: string;
-  dueDate?: string;
+  startDate: string | null;
+  dueDate: string | null;
   createdAt: string;
   updatedAt: string;
 }
 
-interface CreateTaskData {
+export interface CreateTaskData {
   title: string;
   description?: string;
   startDate?: string;
   dueDate?: string;
 }
 
-interface UpdateTaskData {
+export interface UpdateTaskData {
   title?: string;
   description?: string;
   completed?: boolean;
   startDate?: string;
   dueDate?: string;
 }
-
-export type { Task, CreateTaskData, UpdateTaskData };

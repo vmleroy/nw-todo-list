@@ -1,6 +1,6 @@
 import { PrismaService } from '#/prisma.service';
 import { Injectable } from '@nestjs/common';
-import { TaskCreateDto, TaskResponseDto, TaskUpdateDto } from './task.dto';
+import { TaskCreateDto, TaskResponseDto, TaskUpdateDto } from '@repo/api';
 import { TaskRepository } from './task.repository';
 import { sanitizeDateToIso } from '#/utils/date-to-iso-time';
 

@@ -20,3 +20,15 @@ export type TokenResponse = {
   refreshToken: string;
   expiresIn: number;
 };
+
+export type AuthResponse = {
+  accessToken: string;
+  refreshToken: string;
+  expiresIn: number;
+  user: {
+    id: string;
+    name: string | null;
+    email: string;
+    role: 'USER' | 'ADMIN';
+  };
+};

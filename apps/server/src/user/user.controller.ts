@@ -10,7 +10,7 @@ import {
   UnauthorizedException,
 } from '@nestjs/common';
 import { UserService } from './user.service';
-import { UserCreateDTO } from './user.dto';
+import { UserCreateDTO } from '@repo/api';
 import { AuthGuard } from '#/auth/auth.guard';
 import { CurrentUser } from './user.decorator';
 

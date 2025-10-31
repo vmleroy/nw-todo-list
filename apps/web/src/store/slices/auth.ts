@@ -1,12 +1,12 @@
+import { UserEntity } from '@repo/api';
 import { StateCreator } from 'zustand';
-import { User } from '../../types/user';
 
 export interface AuthSlice {
   accessToken: string | null;
   refreshToken: string | null;
-  user: User | null;
+  user: UserEntity | null;
 
-  setAuth: (auth: { accessToken: string; refreshToken: string; user: User }) => void;
+  setAuth: (auth: { accessToken: string; refreshToken: string; user: UserEntity }) => void;
   logout: () => void;
   getAccessToken: () => string | null;
 }

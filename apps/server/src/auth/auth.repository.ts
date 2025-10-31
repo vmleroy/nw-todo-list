@@ -3,8 +3,8 @@ import {
   AuthSignInDTO,
   AuthSignUpDTO,
   TokenResponse,
-} from './auth.dto';
-import { UserResponseDTO } from '#/user/user.dto';
+  UserResponseDTO,
+} from '@repo/api';
 
 export abstract class AuthRepository {
   abstract signIn(data: AuthSignInDTO): Promise<{
