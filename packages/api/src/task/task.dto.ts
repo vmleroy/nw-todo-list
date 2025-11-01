@@ -94,4 +94,9 @@ export type TaskResponseDto = {
   dueDate: Date | null;
   createdAt: Date;
   updatedAt: Date;
+  user: {
+    id: string;
+    name: string | null;
+    email: string;
+  };
 };

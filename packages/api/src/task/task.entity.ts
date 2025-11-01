@@ -7,6 +7,11 @@ export interface TaskEntity {
   dueDate: string | null;
   createdAt: string;
   updatedAt: string;
+  user: {
+    id: string;
+    name: string | null;
+    email: string;
+  };
 }
 
 export interface CreateTaskData {

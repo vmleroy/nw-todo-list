@@ -6,7 +6,7 @@ import {
 } from '@repo/ui/components/card';
 import { Button } from '@repo/ui/components/button';
 import { Checkbox } from '@repo/ui/components/checkbox';
-import { Trash2, Edit } from 'lucide-react';
+import { Trash2, Edit, User } from 'lucide-react';
 import { cn } from '@repo/ui/lib/utils';
 import { TaskEntity, UpdateTaskData } from '@repo/api';
 import { useState } from 'react';
@@ -20,7 +20,7 @@ interface TaskCardProps {
 }
 
 export function TaskCard({ task, onToggle, onEdit, onDelete }: TaskCardProps) {
-  const { id, title, description, completed, dueDate } = task;
+  const { id, title, description, completed, dueDate, user } = task;
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
 
   const handleEdit = (updatedTask: UpdateTaskData) => {

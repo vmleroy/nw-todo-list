@@ -20,6 +20,15 @@ export class TaskService extends TaskRepository {
         ...data,
         user: { connect: { id: userId } },
       },
+      include: {
+        user: {
+          select: {
+            id: true,
+            name: true,
+            email: true,
+          },
+        },
+      },
     });
     
     console.log('TaskService.create - Created task:', task);
@@ -38,6 +47,15 @@ export class TaskService extends TaskRepository {
     const task = await this.prismaService.task.update({
       where: { id: taskId, userId },
       data: data,
+      include: {
+        user: {
+          select: {
+            id: true,
+            name: true,
+            email: true,
+          },
+        },
+      },
     });
     
     console.log('TaskService.update - Updated task:', task);
@@ -53,6 +71,15 @@ export class TaskService extends TaskRepository {
   async findAll(userId: string): Promise<TaskResponseDto[]> {
     const tasks = await this.prismaService.task.findMany({
       where: { userId },
+      include: {
+        user: {
+          select: {
+            id: true,
+            name: true,
+            email: true,
+          },
+        },
+      },
     });
     return tasks;
   }
@@ -63,11 +90,30 @@ export class TaskService extends TaskRepository {
   ): Promise<TaskResponseDto | null> {
     const task = await this.prismaService.task.findUnique({
       where: { id: taskId, userId },
+      include: {
+        user: {
+          select: {
+            id: true,
+            name: true,
+            email: true,
+          },
+        },
+      },
     });
     return task ? task : null;
   }
 
   async getAll(): Promise<TaskResponseDto[]> {
-    return this.prismaService.task.findMany();
+    return this.prismaService.task.findMany({
+      include: {
+        user: {
+          select: {
+            id: true,
+            name: true,
+            email: true,
+          },
+        },
+      },
+    });
   }
 }

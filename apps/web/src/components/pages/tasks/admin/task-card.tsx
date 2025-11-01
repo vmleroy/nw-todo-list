@@ -7,13 +7,14 @@ import {
 import { Checkbox } from '@repo/ui/components/checkbox';
 import { cn } from '@repo/ui/lib/utils';
 import { TaskEntity } from '@repo/api';
+import { User } from 'lucide-react';
 
 interface TaskCardProps {
   task: TaskEntity;
 }
 
 export function TaskCard({ task }: TaskCardProps) {
-  const { title, description, completed, dueDate } = task;
+  const { title, description, completed, dueDate, user } = task;
 
   return (
     <>
@@ -36,6 +37,11 @@ export function TaskCard({ task }: TaskCardProps) {
                 {description && (
                   <p className="text-sm text-muted-foreground">{description}</p>
                 )}
+                {/* Add creator information */}
+                <div className="flex items-center gap-1 mt-2 text-xs text-muted-foreground">
+                  <User className="h-3 w-3" />
+                  <span>Created by: {user.name} - {user.email}</span>
+                </div>
               </div>
             </div>
           </div>
