@@ -19,36 +19,36 @@ import {
   FormLabel,
   FormMessage,
 } from '@repo/ui/components/form';
-import { TaskEntity, UpdateTaskData } from '@repo/api';
+import { CreateTaskData } from '@repo/api';
 
-interface TaskEditDialogProps {
-  task: TaskEntity;
+interface TaskCreateDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
-  onSave: (task: UpdateTaskData) => void;
+  onSave: (task: CreateTaskData) => void;
 }
 
-export function TaskEditDialog({
-  task,
+export function TaskCreateDialog({
   open,
   onOpenChange,
   onSave,
-}: TaskEditDialogProps) {
-  const form = useForm<UpdateTaskData>({
+}: TaskCreateDialogProps) {
+  const form = useForm<CreateTaskData>({
     defaultValues: {
-      title: task.title,
-      description: task.description || '',
-      dueDate: task.dueDate || '',
+      title: '',
+      description: '',
+      dueDate: '',
     },
   });
 
-  const onSubmit = async (data: UpdateTaskData) => {
-    const updatedTask: UpdateTaskData = {
+  const onSubmit = async (data: CreateTaskData) => {
+    const updatedTask: CreateTaskData = {
       title: data.title,
       description: data.description || undefined,
-      dueDate: data.dueDate || undefined,
+      // Convert date to ISO string if provided
+      dueDate: data.dueDate ? new Date(data.dueDate).toISOString() : undefined,
     };
 
+    form.reset();
     onSave(updatedTask);
     onOpenChange(false);
   };

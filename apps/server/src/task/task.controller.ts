@@ -115,8 +115,7 @@ export class TaskController {
   @ApiOperation({ summary: 'Get all tasks (Admin only)' })
   @ApiResponse({ status: 200, description: 'All tasks retrieved successfully' })
   @ApiResponse({ status: 403, description: 'Forbidden - Admin access required' })
-  async findAllForAdmin(): Promise<TaskResponseDto[]> {
-    
+  async findAllForAdmin(): Promise<TaskResponseDto[]> {    
     return this.taskService.getAll();
   }
 }

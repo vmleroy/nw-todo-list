@@ -10,7 +10,7 @@ export class TaskService extends TaskRepository {
     super();
   }
 
-  async create(userId: string, data: TaskCreateDto): Promise<TaskResponseDto> {
+  async create(userId: string, data: TaskCreateDto): Promise<TaskResponseDto> {  
     // Sanitize date fields
     data.dueDate = sanitizeDateToIso(data.dueDate);
     data.startDate = sanitizeDateToIso(data.startDate);
@@ -21,6 +21,8 @@ export class TaskService extends TaskRepository {
         user: { connect: { id: userId } },
       },
     });
+    
+    console.log('TaskService.create - Created task:', task);
     return task;
   }
 
@@ -28,7 +30,7 @@ export class TaskService extends TaskRepository {
     userId: string,
     taskId: string,
     data: TaskUpdateDto,
-  ): Promise<TaskResponseDto> {
+  ): Promise<TaskResponseDto> { 
     // Sanitize date fields
     data.dueDate = sanitizeDateToIso(data.dueDate);
     data.startDate = sanitizeDateToIso(data.startDate);
@@ -37,6 +39,8 @@ export class TaskService extends TaskRepository {
       where: { id: taskId, userId },
       data: data,
     });
+    
+    console.log('TaskService.update - Updated task:', task);
     return task;
   }
 

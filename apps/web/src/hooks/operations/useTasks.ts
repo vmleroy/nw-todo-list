@@ -1,12 +1,19 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { api } from '../../lib/api';
-import { CreateTaskData, TaskEntity, UpdateTaskData } from '@repo/api';
+import {
+  CreateTaskData,
+  TaskEntity,
+  UpdateTaskData,
+  UserEntity,
+} from '@repo/api';
 
-export const useTasks = () => {
+export const useTasks = (userRole: UserEntity['role']) => {
+  const url = userRole === 'ADMIN' ? '/tasks/admin/all' : '/tasks';
+
   return useQuery({
     queryKey: ['tasks'],
     queryFn: async (): Promise<TaskEntity[]> => {
-      const response = await api.get('/tasks');
+      const response = await api.get(url);
       return response.data;
     },
   });
