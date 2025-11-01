@@ -29,7 +29,7 @@ export default function LoginPage() {
 
         <div className="text-center">
           <Button variant="link" asChild>
-            <Link href="/register">Don't have an account? Sign up</Link>
+            <Link href="/register">Don&apos;t have an account? Sign up</Link>
           </Button>
         </div>
       </div>
