@@ -2,17 +2,22 @@
 
 import { useEffect } from 'react';
 import { useStore } from '../store';
-import { useRefreshTokens, useSignIn, useSignOut, useSignUp } from './operations/useAuth';
+import {
+  useRefreshTokens,
+  useSignIn,
+  useSignOut,
+  useSignUp,
+} from './operations/useAuth';
 
 interface AuthFormData {
-  name?: string;
+  name: string;
   email: string;
   password: string;
 }
 
 export const useAuth = () => {
   const { user, accessToken, refreshToken, logout } = useStore();
-  
+
   const signInMutation = useSignIn();
   const signUpMutation = useSignUp();
   const signOutMutation = useSignOut();
@@ -36,7 +41,7 @@ export const useAuth = () => {
     return () => clearInterval(refreshInterval);
   }, [accessToken, refreshToken, user, refreshMutation, logout]);
 
-  const signIn = async (data: AuthFormData): Promise<boolean> => {
+  const signIn = async (data: Omit<AuthFormData, 'name'>): Promise<boolean> => {
     try {
       await signInMutation.mutateAsync({
         email: data.email,
@@ -51,7 +56,7 @@ export const useAuth = () => {
   const signUp = async (data: AuthFormData): Promise<boolean> => {
     try {
       await signUpMutation.mutateAsync({
-        name: data.name!,
+        name: data.name,
         email: data.email,
         password: data.password,
       });
@@ -67,8 +72,15 @@ export const useAuth = () => {
 
   return {
     user,
-    loading: signInMutation.isPending || signUpMutation.isPending || signOutMutation.isPending,
-    error: signInMutation.error?.message || signUpMutation.error?.message || signOutMutation.error?.message || null,
+    loading:
+      signInMutation.isPending ||
+      signUpMutation.isPending ||
+      signOutMutation.isPending,
+    error:
+      signInMutation.error?.message ||
+      signUpMutation.error?.message ||
+      signOutMutation.error?.message ||
+      null,
     signIn,
     signUp,
     signOut,

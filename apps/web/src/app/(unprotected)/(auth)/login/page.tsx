@@ -1,4 +1,4 @@
-import { AuthSignInForm } from '@/components/pages/login';
+import { AuthSignInForm } from '@/components/pages/auth';
 import Link from 'next/link';
 import {
   Card,

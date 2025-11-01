@@ -11,6 +11,8 @@ export class UserService extends UserRepository {
   async create(data: UserCreateDTO): Promise<{ id: string }> {
     // Hash password
     const hashedPassword = await bcrypt.hash(data.password, 10);
+    console.log('Creating user with data:', data);
+    console.log('Hashed Password:', hashedPassword);
     const user = await this.prismaService.user.create({
       data: { ...data, password: hashedPassword },
     });

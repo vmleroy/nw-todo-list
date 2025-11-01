@@ -53,6 +53,7 @@ export class AuthController {
     }
   }})
   async signUp(@Body() data: AuthSignUpDTO) {
+    console.log('Received sign up data:', data);
     return this.authService.signUp(data);
   }
 

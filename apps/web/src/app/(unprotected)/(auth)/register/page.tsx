@@ -6,7 +6,7 @@ import {
   CardTitle,
 } from '@repo/ui/components/card';
 import { Button } from '@repo/ui/components/button';
-import { AuthSignUpForm } from '@/components/pages/login';
+import { AuthSignUpForm } from '@/components/pages/auth';
 
 export default function RegisterPage() {
   return (

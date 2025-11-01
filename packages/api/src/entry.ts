@@ -1,24 +1,31 @@
 // Auth
-export type {
+export {
   AuthSignInDTO,
   AuthSignUpDTO,
+  RefreshTokenDTO,
+} from './auth/auth.dto';
+export type {
   AuthJWTPayload,
   TokenResponse,
   AuthResponse,
 } from './auth/auth.dto';
 
 // User
-export type {
+export {
   UserCreateDTO,
   UserUpdateDTO,
+} from './user/user.dto';
+export type {
   UserResponseDTO,
 } from './user/user.dto';
 export type { UserEntity } from './user/user.entity';
 
 // Task
-export type {
+export {
   TaskCreateDto,
   TaskUpdateDto,
+} from './task/task.dto';
+export type {
   TaskResponseDto,
 } from './task/task.dto';
 export type {
