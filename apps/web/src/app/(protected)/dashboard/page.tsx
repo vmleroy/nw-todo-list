@@ -87,7 +87,7 @@ export default function DashboardPage() {
           </CardHeader>
           <CardContent>
             <div className="grid gap-4 md:grid-cols-2">
-              <Link href="/dashboard/tasks" className="block">
+              <Link href="/tasks" className="block">
                 <Button
                   variant="outline"
                   className="w-full h-auto p-4 justify-start"
