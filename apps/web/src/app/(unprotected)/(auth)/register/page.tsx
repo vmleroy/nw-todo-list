@@ -1,4 +1,3 @@
-import { AuthSignInForm } from '@/components/pages/login';
 import Link from 'next/link';
 import {
   Card,
@@ -7,8 +6,9 @@ import {
   CardTitle,
 } from '@repo/ui/components/card';
 import { Button } from '@repo/ui/components/button';
+import { AuthSignUpForm } from '@/components/pages/login';
 
-export default function LoginPage() {
+export default function RegisterPage() {
   return (
     <div className="min-h-screen flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
       <div className="max-w-md w-full space-y-8">
@@ -19,17 +19,17 @@ export default function LoginPage() {
         <Card>
           <CardHeader className="text-center">
             <CardTitle className="text-3xl font-extrabold">
-              Sign in to your account
+              Create your account
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <AuthSignInForm />
+            <AuthSignUpForm />
           </CardContent>
         </Card>
 
         <div className="text-center">
           <Button variant="link" asChild>
-            <Link href="/register">Don't have an account? Sign up</Link>
+            <Link href="/register">Already have an account? Sign in</Link>
           </Button>
         </div>
       </div>
