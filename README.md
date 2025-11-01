@@ -1,124 +1,295 @@
-# Turborepo starter
+# NW Todo List
 
-This is a community-maintained example. If you experience a problem, please submit a pull request with a fix. GitHub Issues will be closed.
+A full-stack todo list application built with modern technologies including NestJS, Next.js, and deployed on AWS.
 
-## Using this example
+## 🏗️ Architecture
 
-Run the following command:
+This is a monorepo managed with Turborepo containing:
 
-```bash
-npx create-turbo@latest -e with-nestjs
+- **Frontend**: Next.js 14 with TypeScript and Tailwind CSS
+- **Backend**: NestJS API with Prisma ORM
+- **Database**: PostgreSQL
+- **Authentication**: JWT tokens
+- **Infrastructure**: AWS (ECS, RDS, ECR)
+- **Documentation**: Swagger/OpenAPI
+
+## 📁 Project Structure
+
 ```
-
-## What's inside?
-
-This Turborepo includes the following packages & apps:
-
-### Apps and Packages
-
-```shell
 .
-├── apps
-│   ├── api                       # NestJS app (https://nestjs.com).
-│   └── web                       # Next.js app (https://nextjs.org).
-└── packages
-    ├── @repo/api                 # Shared `NestJS` resources.
-    ├── @repo/eslint-config       # `eslint` configurations (includes `prettier`)
-    ├── @repo/jest-config         # `jest` configurations
-    ├── @repo/typescript-config   # `tsconfig.json`s used throughout the monorepo
-    └── @repo/ui                  # Shareable stub React component library.
+├── apps/
+│   ├── server/          # NestJS API server
+│   └── web/            # Next.js frontend
+├── packages/
+│   ├── api/            # Shared API types and DTOs
+│   ├── ui/             # Shared React components
+│   ├── eslint-config/  # ESLint configurations
+│   ├── typescript-config/ # TypeScript configurations
+│   ├── tailwind-config/   # Tailwind CSS config
+│   ├── jest-config/       # Jest test config
+│   └── infra/             # Terraform infrastructure
+└── docs/               # Documentation
 ```
 
-Each package and application are mostly written in [TypeScript](https://www.typescriptlang.org/).
+## 🚀 Quick Start
 
-### Utilities
+### Prerequisites
 
-This `Turborepo` has some additional tools already set for you:
+- Node.js 18+
+- pnpm (recommended) or npm
+- PostgreSQL database
+- Docker (for deployment)
 
-- [TypeScript](https://www.typescriptlang.org/) for static type-safety
-- [ESLint](https://eslint.org/) for code linting
-- [Prettier](https://prettier.io) for code formatting
-- [Jest](https://prettier.io) & [Playwright](https://playwright.dev/) for testing
-
-### Commands
-
-This `Turborepo` already configured useful commands for all your apps and packages.
-
-#### Build
+### 1. Clone and Install
 
 ```bash
-# Will build all the app & packages with the supported `build` script.
-pnpm run build
-
-# ℹ️ If you plan to only build apps individually,
-# Please make sure you've built the packages first.
+git clone <repository-url>
+cd nw-todo-list
+pnpm install
 ```
 
-#### Develop
+### 2. Environment Setup
 
-```bash
-# Will run the development server for all the app & packages with the supported `dev` script.
-pnpm run dev
+Create environment files:
+
+- You need to have a postgreSQL instance running (I recommend using Neon). You will only need to have the database url connection
+
+**apps/server/.env**
+
+```env
+DATABASE_URL="postgresql://username:password@localhost:5432/todolist"
+JWT_SECRET="your-super-secret-jwt-key"
+NODE_ENV="development"
+PORT=3001
+CORS_ORIGINS="http://localhost:3000"
+FRONTEND_URL="http://localhost:3000"
 ```
 
-#### test
+**apps/web/.env.local**
 
-```bash
-# Will launch a test suites for all the app & packages with the supported `test` script.
-pnpm run test
-
-# You can launch e2e testes with `test:e2e`
-pnpm run test:e2e
-
-# See `@repo/jest-config` to customize the behavior.
+```env
+NEXT_PUBLIC_API_URL="http://localhost:3001/api"
 ```
 
-#### Lint
+### 3. Database Setup
 
 ```bash
-# Will lint all the app & packages with the supported `lint` script.
-# See `@repo/eslint-config` to customize the behavior.
-pnpm run lint
+# Navigate to server directory
+cd apps/server
+
+# Generate Prisma client
+pnpm db:generate
+
+# Run database migrations
+pnpm db:migrate
+
+# (Optional) Seed database
+pnpm db:seed
 ```
 
-#### Format
+### 4. Start Development
 
 ```bash
-# Will format all the supported `.ts,.js,json,.tsx,.jsx` files.
-# See `@repo/eslint-config/prettier-base.js` to customize the behavior.
+# From root directory - starts both frontend and backend
+pnpm dev
+
+# Or start individually:
+# Backend only
+cd apps/server && pnpm dev
+
+# Frontend only
+cd apps/web && pnpm dev
+```
+
+### 5. Access the Application
+
+- **Frontend**: http://localhost:3000
+- **Backend API**: http://localhost:3001/api
+- **API Documentation**: http://localhost:3001/api-docs
+
+## 📚 Features
+
+### Authentication
+
+- User registration and login
+- JWT token-based authentication
+- Role-based access control (USER/ADMIN)
+
+### Task Management
+
+- Create, read, update, delete tasks
+- Task completion tracking
+- Due date management
+- User attribution (shows who created each task)
+
+### Admin Features
+
+- View all tasks from all users
+- User management
+- System overview
+
+## 🛠️ Development Commands
+
+```bash
+# Install dependencies
+pnpm install
+
+# Development (all apps)
+pnpm dev
+
+# Build all packages and apps
+pnpm build
+
+# Run tests
+pnpm test
+
+# Lint code
+pnpm lint
+
+# Format code
 pnpm format
+
+# Database operations (from apps/server)
+pnpm db:generate    # Generate Prisma client
+pnpm db:migrate     # Run migrations
+pnpm db:seed        # Seed database
+pnpm db:studio      # Open Prisma Studio
+pnpm db:reset       # Reset database
 ```
 
-### Remote Caching
-
-> [!TIP]
-> Vercel Remote Cache is free for all plans. Get started today at [vercel.com](https://vercel.com/signup?/signup?utm_source=remote-cache-sdk&utm_campaign=free_remote_cache).
-
-Turborepo can use a technique known as [Remote Caching](https://turborepo.com/docs/core-concepts/remote-caching) to share cache artifacts across machines, enabling you to share build caches with your team and CI/CD pipelines.
-
-By default, Turborepo will cache locally. To enable Remote Caching you will need an account with Vercel. If you don't have an account you can [create one](https://vercel.com/signup?utm_source=turborepo-examples), then enter the following commands:
+## 🧪 Testing
 
 ```bash
-npx turbo login
+# Run all tests
+pnpm test
+
+# Run E2E tests
+pnpm test:e2e
+
+# Run tests for specific package
+pnpm test --filter=server
 ```
 
-This will authenticate the Turborepo CLI with your [Vercel account](https://vercel.com/docs/concepts/personal-accounts/overview).
+## 📖 API Documentation
 
-Next, you can link your Turborepo to your Remote Cache by running the following command from the root of your Turborepo:
+The API is fully documented with Swagger/OpenAPI:
+
+1. Start the server: `cd apps/server && pnpm dev`
+2. Visit: http://localhost:3001/api-docs
+3. Use the "Authorize" button to test authenticated endpoints
+
+### Key Endpoints
+
+- `POST /api/auth/signin` - User login
+- `POST /api/auth/signup` - User registration
+- `GET /api/tasks` - Get user tasks
+- `POST /api/tasks` - Create task
+- `PATCH /api/tasks/{id}` - Update task
+- `DELETE /api/tasks/{id}` - Delete task
+- `GET /api/tasks/admin/all` - Get all tasks (admin only)
+
+## 🚀 Deployment
+
+### Docker Deployment
+
+Build images:
 
 ```bash
-npx turbo link
+# Build server image
+docker build -t nw-todo-server -f apps/server/Dockerfile .
+
+# Build web image
+docker build -t nw-todo-web -f apps/web/Dockerfile .
 ```
 
-## Useful Links
+### AWS Deployment
 
-This example take some inspiration the [with-nextjs](https://github.com/vercel/turborepo/tree/main/examples/with-nextjs) `Turbo` example and [01-cats-app](https://github.com/nestjs/nest/tree/master/sample/01-cats-app) `NestJs` sample.
+The project includes Terraform configurations for AWS deployment:
 
-Learn more about the power of Turborepo:
+1. **Prerequisites**:
+   - AWS CLI configured
+   - Terraform installed
+   - Docker installed
 
-- [Tasks](https://turborepo.com/docs/crafting-your-repository/running-tasks)
-- [Caching](https://turborepo.com/docs/crafting-your-repository/caching)
-- [Remote Caching](https://turborepo.com/docs/core-concepts/remote-caching)
-- [Filtering](https://turborepo.com/docs/crafting-your-repository/running-tasks#using-filters)
-- [Configuration Options](https://turborepo.com/docs/reference/configuration)
-- [CLI Usage](https://turborepo.com/docs/reference/command-line-reference)
+2. **Deploy Infrastructure**:
+
+   ```bash
+   cd packages/infra/terraform/aws
+
+   # Initialize Terraform
+   terraform init
+
+   # Plan deployment
+   terraform plan -var="db_password=your-secure-password"
+
+   # Apply infrastructure
+   terraform apply -var="db_password=your-secure-password"
+   ```
+
+3. **Build and Push Images**:
+
+   ```bash
+   # Get ECR login token
+   aws ecr get-login-password --region us-east-1 | docker login --username AWS --password-stdin <your-ecr-url>
+
+   # Build and push images
+   docker build -t <ecr-web-url>:latest -f apps/web/Dockerfile .
+   docker push <ecr-web-url>:latest
+
+   docker build -t <ecr-server-url>:latest -f apps/server/Dockerfile .
+   docker push <ecr-server-url>:latest
+   ```
+
+- This output will be thrown after running terraform, so you can have the correct commands.
+
+## 🔧 Configuration
+
+### Database
+
+The application uses PostgreSQL with Prisma ORM. Schema is defined in [`apps/server/prisma/schema.prisma`](apps/server/prisma/schema.prisma).
+
+### CORS
+
+CORS configuration is in [`apps/server/src/config/cors.config.ts`](apps/server/src/config/cors.config.ts). In development, it allows all origins. In production, configure specific domains.
+
+### Validation
+
+All API inputs are validated using class-validator decorators in DTOs located in [`packages/api/src/`](packages/api/src/).
+
+## 🔍 Troubleshooting
+
+### Common Issues
+
+1. **Database Connection Issues**:
+   - Verify PostgreSQL is running
+   - Check DATABASE_URL format
+   - Ensure database exists
+
+2. **CORS Errors**:
+   - Check CORS_ORIGINS environment variable
+   - Verify frontend URL is allowed
+
+3. **Build Failures**:
+   - Build packages first: `pnpm build --filter=@repo/*`
+   - Clear node_modules and reinstall
+
+4. **Authentication Issues**:
+   - Check JWT_SECRET is set
+   - Verify token format in requests
+
+### Logs
+
+- **Development**: Check terminal output
+- **Production**: Use AWS CloudWatch logs
+
+## 📄 License
+
+This project is licensed under the MIT License - see the LICENSE file for details.
+
+## 🔗 Useful Links
+
+- [NestJS Documentation](https://docs.nestjs.com)
+- [Next.js Documentation](https://nextjs.org/docs)
+- [Prisma Documentation](https://www.prisma.io/docs)
+- [Turborepo Documentation](https://turborepo.com/docs)
+- [Tailwind CSS Documentation](https://tailwindcss.com/docs)
