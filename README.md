@@ -119,14 +119,11 @@ cd apps/web && pnpm dev
 
 - Create, read, update, delete tasks
 - Task completion tracking
-- Due date management
-- User attribution (shows who created each task)
 
 ### Admin Features
 
 - View all tasks from all users
-- User management
-- System overview
+- User attribution (shows who created each task)
 
 ## 🛠️ Development Commands
 
