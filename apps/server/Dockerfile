@@ -32,6 +32,9 @@ COPY . .
 WORKDIR /app/apps/server
 RUN pnpm db:generate
 
+# Migrate database
+RUN pnpm prisma migrate deploy --schema=./prisma/schema.prisma
+
 WORKDIR /app
 
 # Build packages first
@@ -48,11 +51,30 @@ WORKDIR /app
 RUN addgroup --system --gid 1001 nestjs
 RUN adduser --system --uid 1001 nestjs
 
-# Copy built application
-COPY --from=builder --chown=nestjs:nestjs /app/apps/server/dist ./dist
-COPY --from=builder --chown=nestjs:nestjs /app/apps/server/prisma ./prisma
-COPY --from=builder --chown=nestjs:nestjs /app/node_modules ./node_modules
+# Install pnpm for production dependencies
+RUN npm install -g pnpm
+
+# Copy package files for production install
 COPY --from=builder --chown=nestjs:nestjs /app/package.json ./package.json
+COPY --from=builder --chown=nestjs:nestjs /app/pnpm-lock.yaml ./pnpm-lock.yaml
+COPY --from=builder --chown=nestjs:nestjs /app/pnpm-workspace.yaml ./pnpm-workspace.yaml
+COPY --from=builder --chown=nestjs:nestjs /app/packages/api/package.json ./packages/api/package.json
+COPY --from=builder --chown=nestjs:nestjs /app/packages/typescript-config/package.json ./packages/typescript-config/package.json
+COPY --from=builder --chown=nestjs:nestjs /app/packages/jest-config/package.json ./packages/jest-config/package.json
+COPY --from=builder --chown=nestjs:nestjs /app/apps/server/package.json ./apps/server/package.json
+
+# Install production dependencies
+RUN pnpm install --prod --frozen-lockfile
+
+# Copy built application and Prisma schema
+COPY --from=builder --chown=nestjs:nestjs /app/apps/server/dist ./apps/server/dist
+COPY --from=builder --chown=nestjs:nestjs /app/apps/server/prisma ./apps/server/prisma
+
+# Copy the entire node_modules to include generated Prisma client
+COPY --from=builder --chown=nestjs:nestjs /app/node_modules ./node_modules
+
+# Change to server directory for execution
+WORKDIR /app/apps/server
 
 USER nestjs
 

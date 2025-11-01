@@ -21,6 +21,18 @@ resource "aws_subnet" "public" {
   }
 }
 
+# Segunda subnet pública para Load Balancer
+resource "aws_subnet" "public_2" {
+  vpc_id                  = aws_vpc.main.id
+  cidr_block              = "10.0.4.0/24"
+  availability_zone       = "${var.aws_region}b"
+  map_public_ip_on_launch = true
+
+  tags = {
+    Name = "public-subnet-2"
+  }
+}
+
 # Subnet privada para RDS
 resource "aws_subnet" "private_a" {
   vpc_id            = aws_vpc.main.id
@@ -68,5 +80,11 @@ resource "aws_route_table" "public" {
 # Associação da route table com a subnet pública
 resource "aws_route_table_association" "public" {
   subnet_id      = aws_subnet.public.id
+  route_table_id = aws_route_table.public.id
+}
+
+# Associação da route table com a segunda subnet pública
+resource "aws_route_table_association" "public_2" {
+  subnet_id      = aws_subnet.public_2.id
   route_table_id = aws_route_table.public.id
 }

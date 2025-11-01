@@ -4,12 +4,12 @@ resource "aws_security_group" "rds_sg" {
   description = "Security group for RDS"
   vpc_id      = aws_vpc.main.id
 
-  # Allow tráfego do EC2 para o RDS na porta 5432
+  # Allow tráfego do ECS para o RDS na porta 5432
   ingress {
     from_port       = 5432
     to_port         = 5432
     protocol        = "tcp"
-    security_groups = [aws_security_group.ec2_sg.id]
+    security_groups = [aws_security_group.ecs_sg.id]
   }
 
   tags = {
