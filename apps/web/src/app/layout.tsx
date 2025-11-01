@@ -1,21 +1,17 @@
-import type { Metadata } from 'next';
-import localFont from 'next/font/local';
-import './globals.css';
-import QueryProvider from '../providers/query-client-provider';
+import { Geist, Geist_Mono } from 'next/font/google';
 
-const geistSans = localFont({
-  src: './fonts/GeistVF.woff',
-  variable: '--font-geist-sans',
-});
-const geistMono = localFont({
-  src: './fonts/GeistMonoVF.woff',
-  variable: '--font-geist-mono',
+import '@repo/ui/globals.css';
+import { Providers } from '@/components/providers';
+
+const fontSans = Geist({
+  subsets: ['latin'],
+  variable: '--font-sans',
 });
 
-export const metadata: Metadata = {
-  title: 'TodoApp',
-  description: 'A modern todo application built with Next.js and NestJS',
-};
+const fontMono = Geist_Mono({
+  subsets: ['latin'],
+  variable: '--font-mono',
+});
 
 export default function RootLayout({
   children,
@@ -23,11 +19,11 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
-      <body className={`${geistSans.variable} ${geistMono.variable}`}>
-        <QueryProvider>
-          {children}
-        </QueryProvider>
+    <html lang="en" suppressHydrationWarning>
+      <body
+        className={`${fontSans.variable} ${fontMono.variable} font-sans antialiased `}
+      >
+        <Providers>{children}</Providers>
       </body>
     </html>
   );
