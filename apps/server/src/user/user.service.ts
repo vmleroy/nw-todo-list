@@ -24,6 +24,22 @@ export class UserService extends UserRepository {
     return { id: user.id };
   }
 
+  async createAdmin(data: UserCreateDTO): Promise<{ id: string }> {
+    // Hash password
+    const hashedPassword = await bcrypt.hash(data.password, 10);
+    const user = await this.prismaService.user.create({
+      data: { ...data, password: hashedPassword },
+    });
+    await this.prismaService.userRole.create({
+      data: {
+        userId: user.id,
+        role: 'ADMIN',
+      },
+    });
+
+    return { id: user.id };
+  }
+
   async update(id: string, data: UserUpdateDTO): Promise<void> {
     await this.prismaService.user.update({
       where: { id },

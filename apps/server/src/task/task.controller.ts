@@ -13,6 +13,8 @@ import { ApiTags, ApiOperation, ApiResponse, ApiBody, ApiBearerAuth } from '@nes
 import { AuthGuard } from '../auth/auth.guard';
 import { TaskService } from './task.service';
 import { TaskCreateDto, TaskResponseDto, TaskUpdateDto } from '@repo/api';
+import { Roles } from '#/roles/roles.decorator';
+import { RolesGuard } from '#/roles/roles.guard';
 
 interface AuthenticatedRequest {
   user: {
@@ -108,10 +110,13 @@ export class TaskController {
   }
 
   @Get('admin/all')
+  @Roles('ADMIN')
+  @UseGuards(AuthGuard, RolesGuard)
   @ApiOperation({ summary: 'Get all tasks (Admin only)' })
   @ApiResponse({ status: 200, description: 'All tasks retrieved successfully' })
   @ApiResponse({ status: 403, description: 'Forbidden - Admin access required' })
   async findAllForAdmin(): Promise<TaskResponseDto[]> {
+    
     return this.taskService.getAll();
   }
 }

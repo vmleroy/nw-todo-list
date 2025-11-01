@@ -39,6 +39,23 @@ export class UserController {
     return this.userService.create(UserCreateDTO);
   }
 
+  @Post('admin')
+  @ApiOperation({ summary: 'Create new admin user (for testing)' })
+  @ApiResponse({ status: 201, description: 'Admin user successfully created' })
+  @ApiResponse({ status: 400, description: 'Bad request' })
+  @ApiBody({ type: Object, examples: {
+    example1: {
+      value: {
+        name: 'Admin User',
+        email: 'admin@example.com',
+        password: 'admin123'
+      }
+    }
+  }})
+  async createAdmin(@Body() UserCreateDTO: UserCreateDTO) {
+    return this.userService.createAdmin(UserCreateDTO);
+  }
+
   @Patch(':id')
   @ApiOperation({ summary: 'Update user' })
   @ApiResponse({ status: 200, description: 'User successfully updated' })
