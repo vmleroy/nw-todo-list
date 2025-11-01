@@ -16,6 +16,7 @@ COPY packages/ui/package.json ./packages/ui/
 COPY packages/typescript-config/package.json ./packages/typescript-config/
 COPY packages/eslint-config/package.json ./packages/eslint-config/
 COPY packages/jest-config/package.json ./packages/jest-config/
+COPY packages/tailwind-config/package.json ./packages/tailwind-config/
 COPY apps/web/package.json ./apps/web/
 
 # Install dependencies
@@ -30,11 +31,13 @@ RUN npm install -g pnpm
 COPY --from=deps /app/node_modules ./node_modules
 COPY . .
 
-# Build packages first
-RUN pnpm build --filter=@repo/api
-RUN pnpm build --filter=@repo/ui
+# Build packages first (in dependency order)
 RUN pnpm build --filter=@repo/typescript-config
 RUN pnpm build --filter=@repo/eslint-config
+RUN pnpm build --filter=@repo/jest-config
+RUN pnpm build --filter=@repo/api
+RUN pnpm build --filter=@repo/tailwind-config
+RUN pnpm build --filter=@repo/ui
 
 # Build the web app
 ENV NEXT_TELEMETRY_DISABLED 1
